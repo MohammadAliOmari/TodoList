@@ -14,11 +14,10 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
-  late SharedPreferences pref;
+  SharedPreferences? pref;
   TextEditingController tdcontroller = TextEditingController();
   final todosList = ToDo.todoList();
   List<ToDo> foundToDo = [];
-  late String strd;
   @override
   void initState() {
     foundToDo = todosList;
@@ -29,12 +28,12 @@ class _TodoListState extends State<TodoList> {
   List tdolist = [];
   Future setupToDo() async {
     pref = await SharedPreferences.getInstance();
-    var strd = pref.getString('todo') ?? "";
-    if (strd.isNotEmpty) {
-      tdolist = jsonDecode(strd);
+    String todoText = pref!.getString('todo') ?? "";
+    if (todoText.isNotEmpty) {
+      tdolist = jsonDecode(todoText);
     }
 
-    for (var todo in tdolist) {
+    for (Map<String, dynamic> todo in tdolist) {
       setState(() {
         todosList.add(ToDo.fromJson(todo));
       });
@@ -44,7 +43,7 @@ class _TodoListState extends State<TodoList> {
 
   void savetodo() {
     List items = foundToDo.map((e) => e.toJson()).toList();
-    pref.setString('todo', jsonEncode(items));
+    pref!.setString('todo', jsonEncode(items));
   }
 
   @override
@@ -75,7 +74,7 @@ class _TodoListState extends State<TodoList> {
     }
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Todo List',
@@ -86,7 +85,7 @@ class _TodoListState extends State<TodoList> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: bgColor,
+        backgroundColor: backgroundColor,
         elevation: 0,
       ),
       body: SingleChildScrollView(
